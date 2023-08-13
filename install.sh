@@ -1,7 +1,36 @@
 #!/bin/bash
 
-install_dir_name="/42-Logtime-Checker"
+install_dir_name="/42-Logtime-Checker/"
+program_name="logtime.py"
 install_dir="$HOME$install_dir_name"
+
+# Determine the shell type
+SHELL_TYPE=$(basename "$SHELL")
+
+# Define the shell configuration file
+if [ "$SHELL_TYPE" = "zsh" ]; then
+    shell_config_file="$HOME/.zshrc"
+elif [ "$SHELL_TYPE" = "bash" ]; then
+    shell_config_file="$HOME/.bashrc"
+else
+    echo "Unsupported shell: $SHELL_TYPE. Exiting."
+    exit 1
+fi
+
+clone_repo()
+{
+    # Check if repository already exists
+    if [ -d $install_dir ]; then
+        echo "Repository already exists at $install_dir."
+    else
+        # Clone repository
+        echo "Cloning repository in $install_dir"
+        if ! git clone https://github.com/Dwimpy/42-Logtime-Checker $install_dir; then
+            echo "Failed to clone the repository. Exiting."
+            exit 1
+        fi
+    fi
+}
 
 install_dependencies()
 {
@@ -26,28 +55,19 @@ install_dependencies()
 	fi
 }
 
-clone_repo()
-{
-    # Check if repository already exists
-    if [ -d $install_dir ]; then
-        echo "Repository already exists at $install_dir."
-    else
-        # Clone repository
-        echo "Cloning repository in $HOME/42-Logtime-Checker"
-        if ! git clone https://github.com/Dwimpy/42-Logtime-Checker $install_dir; then
-            echo "Failed to clone the repository. Exiting."
-            exit 1
-        fi
-    fi
-}
-
 configure_logttime_checker()
 {
     # Check if either client ID or client secret environment variables are not set
     if [ -z "$LOGTIME_CLIENT_ID" ] || [ -z "$LOGTIME_CLIENT_SECRET" ]; then
         # Prompt user for client ID and client secret
-        read -p "Enter Client ID: " client_id
-        read -p "Enter Client Secret: " client_secret
+        vared_command="vared -p 'Enter Client %s: ' -c %s"
+        if [ "$SHELL_TYPE" = "zsh" ]; then
+            eval "$vared_command" "ID" "client_id"
+            eval "$vared_command" "Secret" "client_secret"
+        else
+            read -p "Enter Client ID: " client_id
+            read -p "Enter Client Secret: " client_secret
+        fi
 
         # Check if client ID and client secret are not empty
         if [ -z "$client_id" ] || [ -z "$client_secret" ]; then
@@ -55,20 +75,18 @@ configure_logttime_checker()
             exit 1
         fi
 
-        # Set environment variables
-        echo "export LOGTIME_CLIENT_ID=$client_id" >> ~/.zshrc
-        echo "export LOGTIME_CLIENT_SECRET=$client_secret" >> ~/.zshrc
+        # Set environment variables in the shell configuration file
+        echo "export LOGTIME_CLIENT_ID=$client_id" >> "$shell_config_file"
+        echo "export LOGTIME_CLIENT_SECRET=$client_secret" >> "$shell_config_file"
     fi
 
-    # Define alias for logtime command
-    echo "alias logtime='$install_dir'" >> ~/.zshrc
+    # Define alias for logtime command in the shell configuration file
+    echo "alias logtime='python3 $install_dir$program_name'" >> "$shell_config_file"
 
-    # Reload .zshrc
-    source ~/.zshrc
+    echo "Configuration completed. Reload the shell to apply changes."
 }
-clone_repo()
-install_dependencies()
-configure_logttime_checker()
 
-# Run Python script
-logtime
+# Main script flow
+clone_repo
+install_dependencies
+configure_logttime_checker
