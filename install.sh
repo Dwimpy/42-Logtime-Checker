@@ -60,10 +60,9 @@ configure_logttime_checker()
     # Check if either client ID or client secret environment variables are not set
     if [ -z "$LOGTIME_CLIENT_ID" ] || [ -z "$LOGTIME_CLIENT_SECRET" ]; then
         # Prompt user for client ID and client secret
-        vared_command="vared -p 'Enter Client %s: ' -c %s"
         if [ "$SHELL_TYPE" = "zsh" ]; then
-            eval "$vared_command" "ID" "client_id"
-            eval "$vared_command" "Secret" "client_secret"
+            vared -p "Enter Client ID: " -c client_id
+            vared -p "Enter Client Secret: " -c client_secret
         else
             read -p "Enter Client ID: " client_id
             read -p "Enter Client Secret: " client_secret
