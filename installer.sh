@@ -81,11 +81,8 @@ configure_logttime_checker()
 
     # Define alias for logtime command in the shell configuration file
     echo "alias logtime='python3 $install_dir$program_name'" >> "$shell_config_file"
-	source $shell_config_file
-	# Reload terminal
 
-	exec $(basename $SHELL)
-    echo "Configuration completed. Type 'logtime' to display your log hours."
+    echo "Configuration completed. Reload the shell to apply changes."
 }
 
 # Main script flow
