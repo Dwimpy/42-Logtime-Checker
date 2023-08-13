@@ -84,8 +84,8 @@ configure_logttime_checker()
 	source $shell_config_file
 	# Reload terminal
 
-	exec $(basename $SHELL)
     echo "Configuration completed. Type 'logtime' to display your log hours."
+	exec $SHELL_TYPE
 }
 
 # Main script flow
