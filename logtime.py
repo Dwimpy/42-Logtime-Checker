@@ -7,8 +7,8 @@ from datetime import datetime, timedelta
 import calendar
 from termcolor import colored
 
-client_id = os.environ.get("CLIENT_ID")
-client_secret = os.environ.get("CLIENT_SECRET")
+client_id = os.environ.get("LOGTIME_CLIENT_ID")
+client_secret = os.environ.get("LOGTIME_CLIENT_SECRET")
 
 if not client_id or not client_secret:
 	print("Please set the CLIENT_ID and CLIENT_SECRET environment variables.")
