@@ -66,6 +66,9 @@ configure_logttime_checker()
     # Reload .zshrc
     source ~/.zshrc
 }
+clone_repo()
+install_dependencies()
+configure_logttime_checker()
 
 # Run Python script
 logtime
