@@ -8,3 +8,4 @@
 ```bash
 curl -sSL https://github.com/Dwimpy/42-Logtime-Checker/raw/main/install.sh -o install.sh && chmod +x ./install.sh && $(basename $SHELL) ./install.sh 
 ```
+## Apparently the API only returns the log time with a 2 day delay, so the last 2 days are tracked
