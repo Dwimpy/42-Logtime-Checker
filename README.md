@@ -15,7 +15,7 @@ curl -sSL https://github.com/Dwimpy/42-Logtime-Checker/raw/main/install.sh -o in
 ```
 
 ### How to use:
-#### The script adds two environment variables with the program uses LOGTIME_CLIENT_ID and LOGTIME_CLIENT_SECRET, if the secret expires you need to refresh it, otherwise type:
+#### The script adds two environment variables that the program uses LOGTIME_CLIENT_ID and LOGTIME_CLIENT_SECRET, if the secret expires you need to refresh it, otherwise type:
 ```bash
 logtime
 ```
