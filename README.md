@@ -9,7 +9,7 @@
 
 
 ### How to install:
-#### Copy the following command and paste it in your terminal
+#### Copy the following command and paste it in your terminal, it will clone the repo, install the required libraries and ask for your client id and client secret
 ```bash
 curl -sSL https://github.com/Dwimpy/42-Logtime-Checker/raw/main/install.sh -o install.sh && chmod +x ./install.sh && $(basename $SHELL) ./install.sh 
 ```
