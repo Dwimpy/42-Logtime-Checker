@@ -1,6 +1,6 @@
 # 42-Logtime-Checker
 
-##Info
+## Info
 #### Apparently the API only returns the log time with a 2 day delay from the location_stats endpoint, might try a different solution but it works for now
 
 ## Important
