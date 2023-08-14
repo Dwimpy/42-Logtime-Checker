@@ -1,7 +1,7 @@
 # 42-Logtime-Checker
 
 ## Info
-#### Apparently the API only returns the log time with a 2 day delay from the location_stats endpoint, might try a different solution but it works for now
+#### Apparently the API only returns the log time with a 1 day delay from the location_stats endpoint, it only adds the current day when you log out.
 
 ## Important
 #### Navigate to your intra profile, top-right corner click on your profile, settings API, create a new app and have the client id and client token ready for the script, since i didn't use a redirect-uri, will do it later
