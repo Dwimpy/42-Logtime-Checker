@@ -21,6 +21,7 @@ clone_repo()
 {
     # Check if repository already exists
     if [ -d $install_dir ]; then
+		git pull
         echo "Repository already exists at $install_dir."
     else
         # Clone repository
