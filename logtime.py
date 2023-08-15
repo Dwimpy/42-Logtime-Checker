@@ -7,11 +7,11 @@ from datetime import datetime, timedelta
 import calendar
 from termcolor import colored
 
-client_id = os.environ.get("CLIENT_ID")
-client_secret = os.environ.get("CLIENT_SECRET")
+client_id = os.environ.get("LOGTIME_CLIENT_ID")
+client_secret = os.environ.get("LOGTIME_CLIENT_SECRET")
 
 if not client_id or not client_secret:
-	print("Please set the CLIENT_ID and CLIENT_SECRET environment variables.")
+	print("Please set the LOGTIME_CLIENT_ID and LOGTIME_CLIENT_SECRET environment variables.")
 
 client = BackendApplicationClient(client_id)
 oauth = OAuth2Session(client=client, scope='public')
@@ -32,15 +32,51 @@ if not access_token:
 
 user_id = os.environ.get('USER')
 api_base_url = 'https://api.intra.42.fr/v2/'
-api_url = f'{api_base_url}/users/{user_id}/locations_stats'
+api_url = f'{api_base_url}/locations'
 
 # Set the authorization header with the access token	
 headers = {
     'Authorization': f'Bearer {access_token}'
 }
 
-response = requests.get(api_url, headers=headers)
+curr_user = os.getenv('USER')
 
+params={
+	'user_id': curr_user
+}
+
+response = requests.get(api_url, headers=headers, params=params)
+
+if not response.status_code >= 200 and not response.status_code < 300:
+    print(f"Request failed with status code: {response.status_code}")
+    exit()
+
+begin_at = response.json()
+current_date = datetime.now().date()
+date_time_objects = []
+
+curr_time = str(datetime.now())
+curr_time = datetime.strptime(curr_time, "%Y-%m-%d %H:%M:%S.%f")
+for item in begin_at:
+	begin_at_time = datetime.strptime(item['begin_at'],  "%Y-%m-%dT%H:%M:%S.%fZ")
+	if (item['end_at'] is not None):
+		end_at_time = datetime.strptime(item['end_at'], "%Y-%m-%dT%H:%M:%S.%fZ")
+	else:
+		end_at_time = curr_time
+
+	if (begin_at_time.date() == current_date):
+		date_time_objects.append((begin_at_time, end_at_time))
+
+total_time_diff = 0
+
+for begin_datetime, end_datetime in date_time_objects:
+    time_difference = end_datetime - begin_datetime
+    total_time_diff += time_difference.total_seconds()
+
+api_url = f'{api_base_url}/users/{curr_user}/locations_stats'
+response = requests.get(api_url, headers=headers, params=params)
+
+data = response.json()
 if not response.status_code >= 200 and not response.status_code < 300:
     print(f"Request failed with status code: {response.status_code}")
     exit()
@@ -58,6 +94,13 @@ for date, time in data.items():
 		month_sums[month_name] += log_time_in_seconds
 	else:
 		month_sums[month_name] = log_time_in_seconds
+
+
+month_name = calendar.month_name[int(current_date.month)]
+if (month_sums[month_name]):
+	month_sums[month_name] += timedelta(seconds=total_time_diff)
+else:
+	month_sums[month_name] = timedelta(seconds=total_time_diff)
 
 max_month_len = max(len(colored(month, 'blue')) for month in month_sums)
 max_time_len = max(len(colored(f'{h:d}:{m:02d}', 'green')) for h, m, _ in [(total_time_delta.seconds // 3600, (total_time_delta.seconds // 60) % 60, 0) for total_time_delta in month_sums.values()])
