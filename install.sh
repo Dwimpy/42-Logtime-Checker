@@ -21,8 +21,19 @@ clone_repo()
 {
     # Check if repository already exists
     if [ -d $install_dir ]; then
-		git pull
-        echo "Repository already exists at $install_dir."
+        # Move into the repository directory
+        cd $install_dir
+        
+        # Pull new version if it exists
+        if git pull; then
+            echo "Repository at $install_dir has been updated."
+        else
+            echo "Failed to pull changes from the repository. Exiting."
+            exit 1
+        fi
+
+        # Move back to the original directory
+        cd -
     else
         # Clone repository
         echo "Cloning repository in $install_dir"
